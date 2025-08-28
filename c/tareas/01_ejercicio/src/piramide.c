@@ -7,5 +7,6 @@ void print_pyramid(int rows) {
             printf("*");
         }
         printf("\n");
+        
     }
 }
