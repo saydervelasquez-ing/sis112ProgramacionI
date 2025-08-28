@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "pyramid.h"
+#include "piramide.h"
 
 void print_pyramid(int rows) {
     for (int i = 1; i <= rows; i++) {

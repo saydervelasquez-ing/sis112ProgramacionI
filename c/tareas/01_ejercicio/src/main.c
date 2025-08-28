@@ -1,4 +1,4 @@
-#include "pyramid.h"
+#include "piramide.h"
 
 int main(void) {
     print_pyramid(3);
