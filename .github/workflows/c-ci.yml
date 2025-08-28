@@ -1,0 +1,53 @@
+name: C CI (src/inc modular)
+
+on:
+  push:
+    paths:
+      - "c/**"
+      - ".github/workflows/c-ci.yml"
+  pull_request:
+    paths:
+      - "c/**"
+      - ".github/workflows/c-ci.yml"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compilar y probar cada ejercicio modular
+        shell: bash
+        run: |
+          set -e
+          shopt -s globstar nullglob
+
+          for base in c/{tareas,examen}/**; do
+            if [ -d "$base/src" ]; then
+              echo "=== Construyendo $base ==="
+              mkdir -p "$base/build"
+
+              # Buscar todos los .c en src/
+              SRC_FILES=()
+              while IFS= read -r -d '' f; do
+                SRC_FILES+=("$f")
+              done < <(find "$base/src" -name '*.c' -print0)
+
+              # Compilar
+              if [ -d "$base/inc" ]; then
+                gcc "${SRC_FILES[@]}" -I "$base/inc" -O2 -o "$base/build/app"
+              else
+                gcc "${SRC_FILES[@]}" -O2 -o "$base/build/app"
+              fi
+
+              echo "--- Ejecutando $base/build/app ---"
+              if [ -f "$base/expected.txt" ]; then
+                "$base/build/app" > "$base/build/out.txt"
+                echo "Comparando salida con expected.txt"
+                diff -u "$base/expected.txt" "$base/build/out.txt"
+              else
+                "$base/build/app"
+              fi
+              echo "=== OK: $base ==="
+            fi
+          done
