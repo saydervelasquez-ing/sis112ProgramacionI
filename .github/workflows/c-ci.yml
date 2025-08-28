@@ -19,36 +19,43 @@ jobs:
       - name: Compilar y probar cada ejercicio modular
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
           shopt -s globstar nullglob
 
-          for base in c/{tareas,examen}/**; do
-            if [ -d "$base/src" ]; then
+          # Recorre tareas y (examen|examenes)
+          for base in c/tareas/** c/examen/** c/examenes/**; do
+            # Sólo si existe src/
+            if [[ -d "$base/src" ]]; then
               echo "=== Construyendo $base ==="
               mkdir -p "$base/build"
 
-              # Buscar todos los .c en src/
-              SRC_FILES=()
-              while IFS= read -r -d '' f; do
-                SRC_FILES+=("$f")
-              done < <(find "$base/src" -name '*.c' -print0)
+              # Todos los .c bajo src/
+              SRC_FILES=( "$base"/src/**/*.c )
+              if (( ${#SRC_FILES[@]} == 0 )); then
+                echo "No se encontraron .c en $base/src, se omite."
+                continue
+              fi
 
-              # Compilar
-              if [ -d "$base/inc" ]; then
+              # Incluir headers si hay inc/
+              if [[ -d "$base/inc" ]]; then
                 gcc "${SRC_FILES[@]}" -I "$base/inc" -O2 -o "$base/build/app"
               else
                 gcc "${SRC_FILES[@]}" -O2 -o "$base/build/app"
               fi
 
               echo "--- Ejecutando $base/build/app ---"
-              if [ -f "$base/expected.txt" ]; then
-              # Normaliza: asegura un \n al final en ambos lados antes de comparar
-              "$base/build/app" > "$base/build/out.txt"
-              { cat "$base/expected.txt"; printf '\n'; } | sed '$!b; /^\s*$/d' > "$base/build/expected_norm.txt"
-              { cat "$base/build/out.txt"; printf '\n'; } | sed '$!b; /^\s*$/d' > "$base/build/out_norm.txt"
-              echo "Comparando salida con expected.txt (normalizado)"
-              diff -u "$base/build/expected_norm.txt" "$base/build/out_norm.txt"
-            else
-              "$base/build/app"
+              if [[ -f "$base/expected.txt" ]]; then
+                # Ejecuta y compara salida (tolerante a newline final faltante en expected)
+                "$base/build/app" > "$base/build/out.txt"
+                # Normaliza: asegura newline final en ambos
+                sed -e '$a\' "$base/expected.txt" > "$base/build/expected_norm.txt"
+                sed -e '$a\' "$base/build/out.txt" > "$base/build/out_norm.txt"
+                echo "Comparando salida con expected.txt"
+                diff -u "$base/build/expected_norm.txt" "$base/build/out_norm.txt"
+              else
+                "$base/build/app"
+              fi
+
+              echo "=== OK: $base ==="
             fi
           done
