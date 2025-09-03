@@ -47,7 +47,7 @@ Este repositorio incluye configuración para **GitHub Actions**, lo que permite:
 - Compilar automáticamente los programas en **C** (usando `gcc`).  
 - Ejecutar y probar automáticamente los programas en **Python** (usando `pytest`).  
 
-Los resultados aparecen en la pestaña **Actions** de GitHub y en un badge al inicio de este README.
+Los resultados aparecen en la pestaña **Actions** de GitHub 
 
 
 ---
@@ -57,7 +57,7 @@ Los resultados aparecen en la pestaña **Actions** de GitHub y en un badge al in
 1. Haz un **Fork** de este repositorio.  
 2. Clona tu fork en tu computadora:  
    ```bash
-   git clone https://github.com/TU_USUARIO/programacion1.git
+   git clone https://github.com/<TU_USUARIO>/programacion1.git
    ```
 3. Completa tus datos en este README.
 4. Crea tus carpetas de ejercicios (01_ejercicio, 02_ejercicio, …).
