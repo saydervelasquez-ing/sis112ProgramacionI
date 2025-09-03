@@ -9,9 +9,9 @@ Cada estudiante debe clonar o hacer fork de este repositorio y trabajar en su pr
 
 Completar con tus datos:
 
-- **Nombre:**  
-- **Carrera:**  
-- **Correo institucional:**  
+- **Nombre:Sayder Velasquez Quispe**  
+- **Carrera:Ingenieria Mecatronica**  
+- **Correo institucional:sayder.velasquez@ucb.edu.bo**  
 - **Grupo:**  
 
 ---
